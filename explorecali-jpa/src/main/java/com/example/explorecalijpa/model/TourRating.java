@@ -3,7 +3,6 @@ package com.example.explorecalijpa.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
-
 /**
  * Rating of a Tour by a Customer
  *
