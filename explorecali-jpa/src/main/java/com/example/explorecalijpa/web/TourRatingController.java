@@ -5,10 +5,12 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -43,9 +45,9 @@ public class TourRatingController {
   @ResponseStatus(HttpStatus.CREATED)
   public RatingDto createTourRating(@PathVariable(value = "tourId") int tourId,
       @RequestBody @Valid RatingDto ratingDto) {
-      TourRating rating = tourRatingService.createNew(tourId, ratingDto.getCustomerId(), 
+    TourRating rating = tourRatingService.createNew(tourId, ratingDto.getCustomerId(),
         ratingDto.getScore(), ratingDto.getComment());
-      return new RatingDto(rating);
+    return new RatingDto(rating);
   }
 
   @GetMapping
@@ -63,6 +65,19 @@ public class TourRatingController {
   @GetMapping("/average")
   public Map<String, Double> getAverage(@PathVariable(value = "tourId") int tourId) {
     return Map.of("average", tourRatingService.getAverageScore(tourId));
+  }
+
+  @PutMapping
+  public RatingDto updateWithPut(@PathVariable(value = "tourId") int tourId,
+      @RequestBody @Valid RatingDto ratingDto) {
+    return new RatingDto(tourRatingService.update(tourId, ratingDto.getCustomerId(),
+        ratingDto.getScore(), ratingDto.getComment()));
+  }
+
+  @DeleteMapping("{customerId}")
+  public void delete(@PathVariable(value = "tourId") int tourId,
+      @PathVariable(value = "customerId") int customerId) {
+    tourRatingService.delete(tourId, customerId);
   }
 
   @ExceptionHandler(NoSuchElementException.class)
